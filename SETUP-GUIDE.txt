@@ -1,0 +1,156 @@
+===============================================================
+  BEYOND BOOKS — FREE DATABASE SETUP GUIDE (Google Sheets)
+===============================================================
+
+TOTAL COST: Rs. 0
+TIME TO SET UP: ~10 minutes
+
+This guide connects your website forms to a Google Sheet.
+Every demo booking and enquiry will be saved automatically,
+and you'll get an email notification for each new entry.
+
+---------------------------------------------------------------
+STEP 1: CREATE THE GOOGLE SHEET
+---------------------------------------------------------------
+
+1. Go to https://sheets.google.com
+2. Create a new blank spreadsheet
+3. Rename it to "Beyond Books - Student Data"
+4. In the FIRST ROW (Row 1), add these headers exactly:
+
+   A1: Timestamp
+   B1: Name
+   C1: Age
+   D1: Phone
+   E1: Course
+   F1: Platform
+   G1: Status
+   H1: Notes
+
+5. Rename the sheet tab at the bottom to: "Leads"
+   (Right-click the tab "Sheet1" → Rename → type "Leads")
+
+---------------------------------------------------------------
+STEP 2: ADD THE APPS SCRIPT
+---------------------------------------------------------------
+
+1. In your Google Sheet, go to:
+   Extensions → Apps Script
+
+2. DELETE everything in the code editor
+
+3. PASTE the following code (copy everything between the lines):
+
+- - - - - - - - COPY FROM HERE - - - - - - - -
+
+function doPost(e) {
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Leads");
+    var data = JSON.parse(e.postData.contents);
+
+    sheet.appendRow([
+      new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+      data.name || "",
+      data.age || "",
+      data.phone || "",
+      data.course || "",
+      data.platform || "",
+      "New Lead",
+      ""
+    ]);
+
+    // Send email notification
+    var email = Session.getActiveUser().getEmail();
+    if (email) {
+      MailApp.sendEmail({
+        to: email,
+        subject: "New Beyond Books Lead: " + data.name,
+        body: "New demo booking!\n\n" +
+              "Name: " + data.name + "\n" +
+              "Age: " + data.age + "\n" +
+              "Phone: " + data.phone + "\n" +
+              "Course: " + data.course + "\n" +
+              "Platform: " + data.platform + "\n\n" +
+              "Check your sheet: " + SpreadsheetApp.getActiveSpreadsheet().getUrl()
+      });
+    }
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ status: "success" }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ status: "error", message: error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doGet(e) {
+  return ContentService
+    .createTextOutput(JSON.stringify({ status: "ok", message: "Beyond Books API is running" }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+- - - - - - - - COPY UNTIL HERE - - - - - - - -
+
+4. Click the SAVE icon (or Ctrl+S)
+5. Name the project: "Beyond Books API"
+
+---------------------------------------------------------------
+STEP 3: DEPLOY AS WEB APP
+---------------------------------------------------------------
+
+1. Click "Deploy" button (top right) → "New deployment"
+2. Click the gear icon next to "Select type" → choose "Web app"
+3. Set these options:
+   - Description: "Beyond Books Form Handler"
+   - Execute as: "Me"
+   - Who has access: "Anyone"
+4. Click "Deploy"
+5. Click "Authorize access" → Choose your Google account
+6. If you see "Google hasn't verified this app":
+   - Click "Advanced" (bottom left)
+   - Click "Go to Beyond Books API (unsafe)"
+   - Click "Allow"
+7. COPY the "Web app URL" — it looks like:
+   https://script.google.com/macros/s/XXXXX.../exec
+
+---------------------------------------------------------------
+STEP 4: ADD THE URL TO YOUR WEBSITE
+---------------------------------------------------------------
+
+1. Open the file: beyond-books/script.js
+2. Find this line near the top:
+   const GOOGLE_SHEET_URL = '';
+3. Paste your Web App URL between the quotes:
+   const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/XXXXX.../exec';
+4. Save the file
+5. Commit and push to GitHub:
+   git add -A && git commit -m "Add Google Sheets integration" && git push
+
+---------------------------------------------------------------
+DONE! HERE'S WHAT HAPPENS NOW:
+---------------------------------------------------------------
+
+1. User fills the demo form on your website
+2. Data is saved to your Google Sheet automatically
+3. You get an email notification with the student details
+4. The user's WhatsApp message opens with their details
+5. You can track all leads in your Google Sheet
+
+---------------------------------------------------------------
+BONUS TIPS (ALL FREE):
+---------------------------------------------------------------
+
+- Add Google Analytics:
+  Go to https://analytics.google.com → Create account →
+  Add the tracking code to your index.html
+
+- Use Google Sheet filters to sort leads by course, date, status
+
+- Add a "Subscribed" status column to track who converted
+
+- Share the sheet with your team so everyone can see leads
+
+===============================================================

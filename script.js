@@ -1,3 +1,26 @@
+// ==================== GOOGLE SHEETS CONFIG ====================
+// PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL BELOW (see SETUP-GUIDE.txt)
+const GOOGLE_SHEET_URL = '';
+
+// Save lead to Google Sheets
+async function saveToSheet(data) {
+  if (!GOOGLE_SHEET_URL) {
+    console.log('Google Sheet URL not configured. Lead data:', data);
+    return;
+  }
+  try {
+    await fetch(GOOGLE_SHEET_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    console.log('Lead saved to Google Sheet');
+  } catch (err) {
+    console.error('Sheet save error:', err);
+  }
+}
+
 // ==================== NAVBAR ====================
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
@@ -110,18 +133,35 @@ document.querySelectorAll('.faq-question').forEach(btn => {
 // ==================== DEMO FORM ====================
 const demoForm = document.getElementById('demoForm');
 if (demoForm) {
-  demoForm.addEventListener('submit', e => {
+  demoForm.addEventListener('submit', async e => {
     e.preventDefault();
 
-    const name = document.getElementById('demoName').value;
+    const submitBtn = demoForm.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+
+    // Show loading
+    submitBtn.innerHTML = 'Sending...';
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = '0.7';
+
+    const name = document.getElementById('demoName').value.trim();
     const age = document.getElementById('demoAge').value;
-    const phone = document.getElementById('demoPhone').value;
+    const phone = document.getElementById('demoPhone').value.trim();
     const course = document.getElementById('demoCourse');
     const courseLabel = course.options[course.selectedIndex].text;
     const platform = document.querySelector('input[name="platform"]:checked').value;
-
     const platformNames = { zoom: 'Zoom', meet: 'Google Meet', teams: 'MS Teams' };
 
+    // Save to Google Sheets
+    await saveToSheet({
+      name: name,
+      age: age,
+      phone: phone,
+      course: courseLabel,
+      platform: platformNames[platform]
+    });
+
+    // Open WhatsApp with pre-filled message
     const msg = `Hi! I want to book a free demo class at Beyond Books.%0A%0A` +
       `Student: ${name}%0A` +
       `Age: ${age}%0A` +
@@ -133,15 +173,16 @@ if (demoForm) {
     window.open(`https://wa.me/917032696876?text=${msg}`, '_blank');
 
     // Show success
-    const submitBtn = demoForm.querySelector('button[type="submit"]');
-    const originalText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '&#10003; Sent! Check WhatsApp';
+    submitBtn.innerHTML = '&#10003; Booked! Check WhatsApp';
     submitBtn.style.background = '#22c55e';
+    submitBtn.style.opacity = '1';
+    submitBtn.disabled = false;
+
     setTimeout(() => {
       submitBtn.innerHTML = originalText;
       submitBtn.style.background = '';
       demoForm.reset();
-    }, 3000);
+    }, 4000);
   });
 }
 
