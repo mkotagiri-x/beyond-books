@@ -20,8 +20,11 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Skip to main content (accessibility) -->
+  <a href="#home" class="skip-link">Skip to main content</a>
+
   <!-- Navbar -->
-  <nav class="navbar" id="navbar">
+  <nav class="navbar" id="navbar" aria-label="Main navigation">
     <div class="container nav-container">
       <a href="#" class="logo">
         <img src="assets/logo.svg" alt="Beyond Books" class="logo-img" />
@@ -42,7 +45,7 @@
 
   <!-- Hero Section -->
   <section class="hero" id="home">
-    <div class="hero-bg-shapes">
+    <div class="hero-bg-shapes" aria-hidden="true">
       <div class="shape shape-1"></div>
       <div class="shape shape-2"></div>
       <div class="shape shape-3"></div>
@@ -87,11 +90,11 @@
                 <span>&#128101; 24 joined</span>
               </div>
             </div>
-            <div class="phone-controls">
-              <button class="ctrl-btn">&#127908;</button>
-              <button class="ctrl-btn">&#128247;</button>
-              <button class="ctrl-btn ctrl-end">&#128383;</button>
-              <button class="ctrl-btn">&#128172;</button>
+            <div class="phone-controls" aria-hidden="true">
+              <button class="ctrl-btn" tabindex="-1" aria-label="Microphone">&#127908;</button>
+              <button class="ctrl-btn" tabindex="-1" aria-label="Camera">&#128247;</button>
+              <button class="ctrl-btn ctrl-end" tabindex="-1" aria-label="End call">&#128383;</button>
+              <button class="ctrl-btn" tabindex="-1" aria-label="Chat">&#128172;</button>
             </div>
           </div>
         </div>
@@ -114,7 +117,7 @@
   </section>
 
   <!-- Marquee -->
-  <section class="marquee-section">
+  <section class="marquee-section" aria-hidden="true">
     <div class="marquee-track">
       <div class="marquee-content">
         <span>&#129336; Yoga</span>
@@ -693,7 +696,7 @@
   </section>
 
   <!-- Footer -->
-  <footer class="footer">
+  <footer class="footer" role="contentinfo">
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">

@@ -24,6 +24,29 @@
   --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
 }
 
+/* ==================== ACCESSIBILITY ==================== */
+.skip-link{position:absolute;top:-100%;left:50%;transform:translateX(-50%);background:var(--primary);color:#fff;padding:12px 24px;border-radius:0 0 var(--radius-xs) var(--radius-xs);z-index:9999;font-weight:600;font-size:0.9rem;transition:top 0.2s}
+.skip-link:focus{top:0}
+
+/* Focus visible for keyboard users */
+*:focus-visible{outline:3px solid var(--primary);outline-offset:3px;border-radius:4px}
+button:focus-visible,.btn:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--primary);outline-offset:3px}
+
+/* Reduced motion for users who prefer it */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important}
+  .marquee-content{animation:none}
+  .hero-bg-shapes .shape{animation:none}
+  .floating-card,.class-emoji,.hero-card{animation:none}
+  .reveal{opacity:1;transform:none}
+}
+
+/* High contrast mode support */
+@media(forced-colors:active){
+  .btn{border:2px solid ButtonText}
+  .course-card,.price-card,.step-card,.feature-card{border:2px solid ButtonText}
+}
+
 /* ==================== RESET ==================== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;scroll-padding-top:80px}
