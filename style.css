@@ -205,6 +205,89 @@ img{max-width:100%;display:block}
 .hiphop-bg{background:linear-gradient(135deg,#d1fae5,#ccfbf1)}
 .guitar-bg{background:linear-gradient(135deg,#fed7aa,#fecaca)}
 .art-bg{background:linear-gradient(135deg,#e0e7ff,#ddd6fe)}
+/* Animated Figures */
+.anim-figure{display:flex;align-items:center;justify-content:center;z-index:1}
+.anim-figure svg{overflow:visible}
+
+/* --- Yoga Animations --- */
+.yoga-arm-l{animation:yoga-breathe 4s ease-in-out infinite;transform-origin:60px 42px}
+.yoga-arm-r{animation:yoga-breathe 4s ease-in-out infinite 0.2s;transform-origin:60px 42px}
+.yoga-bent-leg{animation:yoga-leg 4s ease-in-out infinite;transform-origin:55px 62px}
+@keyframes yoga-breathe{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-8deg)}}
+@keyframes yoga-leg{0%,100%{transform:rotate(0deg)}50%{transform:rotate(5deg)}}
+
+/* --- Bollywood Dance Animations --- */
+.bolly-arm-l{animation:bolly-sway-l 1.2s ease-in-out infinite;transform-origin:60px 40px}
+.bolly-hand-l{animation:bolly-sway-l 1.2s ease-in-out infinite 0.1s;transform-origin:32px 38px}
+.bolly-arm-r{animation:bolly-sway-r 1.2s ease-in-out infinite;transform-origin:60px 40px}
+.bolly-hand-r{animation:bolly-sway-r 1.2s ease-in-out infinite 0.1s;transform-origin:88px 42px}
+.bolly-skirt{animation:bolly-skirt-sway 1.2s ease-in-out infinite;transform-origin:60px 65px}
+.bolly-leg-l{animation:bolly-step-l 1.2s ease-in-out infinite;transform-origin:60px 65px}
+.bolly-leg-r{animation:bolly-step-r 1.2s ease-in-out infinite;transform-origin:60px 65px}
+@keyframes bolly-sway-l{0%,100%{transform:rotate(0deg)}50%{transform:rotate(15deg)}}
+@keyframes bolly-sway-r{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-15deg)}}
+@keyframes bolly-skirt-sway{0%,100%{transform:skewX(0deg)}50%{transform:skewX(5deg)}}
+@keyframes bolly-step-l{0%,100%{transform:rotate(0deg)}50%{transform:rotate(8deg)}}
+@keyframes bolly-step-r{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-6deg)}}
+
+/* --- Singer Animations --- */
+.singer-bob{animation:singer-bob 1s ease-in-out infinite;transform-origin:60px 30px}
+.singer-arm{animation:singer-wave 1.5s ease-in-out infinite;transform-origin:60px 44px}
+@keyframes singer-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes singer-wave{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-12deg)}}
+.sound-wave-1{animation:sound-pulse 1.5s ease-out infinite}
+.sound-wave-2{animation:sound-pulse 1.5s ease-out infinite 0.3s}
+.sound-wave-3{animation:sound-pulse 1.5s ease-out infinite 0.6s}
+@keyframes sound-pulse{0%{opacity:0.6;transform:translateX(0)}100%{opacity:0;transform:translateX(8px)}}
+
+/* --- Hip-Hop Animations --- */
+.hiphop-body{animation:hiphop-bounce 0.8s ease-in-out infinite;transform-origin:54px 62px}
+.hiphop-arm-r{animation:hiphop-pump 0.8s ease-in-out infinite;transform-origin:54px 42px}
+.hiphop-fist{animation:hiphop-pump-fist 0.8s ease-in-out infinite}
+.hiphop-leg-l{animation:hiphop-step 0.8s ease-in-out infinite;transform-origin:54px 62px}
+@keyframes hiphop-bounce{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-4px) rotate(2deg)}}
+@keyframes hiphop-pump{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-10deg)}}
+@keyframes hiphop-pump-fist{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes hiphop-step{0%,100%{transform:rotate(0deg)}50%{transform:rotate(5deg)}}
+.energy-1{animation:energy-flash 1s ease-in-out infinite}
+.energy-2{animation:energy-flash 1s ease-in-out infinite 0.3s}
+.energy-3{animation:energy-flash 1s ease-in-out infinite 0.6s}
+@keyframes energy-flash{0%,100%{opacity:1;transform:scaleX(1)}50%{opacity:0.3;transform:scaleX(0.5)}}
+
+/* --- Guitar Animations --- */
+.guitar-nod{animation:guitar-nod 1s ease-in-out infinite}
+.guitar-strum{animation:guitar-strum 0.5s ease-in-out infinite;transform-origin:55px 44px}
+.guitar-fret{animation:guitar-fret-move 2s ease-in-out infinite;transform-origin:36px 52px}
+@keyframes guitar-nod{0%,100%{transform:translateY(0)}50%{transform:translateY(2px)}}
+@keyframes guitar-strum{0%,100%{transform:rotate(0deg)}50%{transform:rotate(6deg)}}
+@keyframes guitar-fret-move{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+
+/* --- Art Animations --- */
+.paint-arm{animation:paint-move 2s ease-in-out infinite;transform-origin:50px 46px}
+.paint-dot{animation:paint-color 3s ease-in-out infinite}
+@keyframes paint-move{0%,100%{transform:rotate(0deg)}25%{transform:rotate(-6deg)}75%{transform:rotate(4deg)}}
+@keyframes paint-color{0%,33%{fill:#ef4444}34%,66%{fill:#3b82f6}67%,100%{fill:#22c55e}}
+.paint-stroke-1{animation:stroke-draw 3s ease-in-out infinite}
+.paint-stroke-2{animation:stroke-draw 3s ease-in-out infinite 1s}
+.paint-stroke-3{animation:stroke-draw 3s ease-in-out infinite 2s}
+@keyframes stroke-draw{0%{stroke-dasharray:0 20}50%{stroke-dasharray:20 0}100%{stroke-dasharray:0 20}}
+
+/* --- Shared: Music notes floating --- */
+.music-float-1{animation:note-float 2.5s ease-in-out infinite}
+.music-float-2{animation:note-float 2.5s ease-in-out infinite 0.8s}
+.music-float-3{animation:note-float 2.5s ease-in-out infinite 1.6s}
+@keyframes note-float{0%{opacity:0.8;transform:translateY(0)}50%{opacity:1;transform:translateY(-10px)}100%{opacity:0;transform:translateY(-20px)}}
+
+/* --- Shared: Sparkles --- */
+.sparkle-1{animation:sparkle 2s ease-in-out infinite}
+.sparkle-2{animation:sparkle 2s ease-in-out infinite 0.7s}
+.sparkle-3{animation:sparkle 2s ease-in-out infinite 1.4s}
+@keyframes sparkle{0%,100%{opacity:0.3;transform:scale(0.8)}50%{opacity:1;transform:scale(1.3)}}
+
+/* --- Head gentle sway (shared) --- */
+.anim-head{animation:head-sway 3s ease-in-out infinite}
+@keyframes head-sway{0%,100%{transform:translateX(0)}50%{transform:translateX(2px)}}
+
 .course-live-badge{position:absolute;top:12px;right:12px;background:var(--coral);color:#fff;font-size:0.65rem;font-weight:700;padding:4px 12px;border-radius:50px;letter-spacing:1px;animation:dot-pulse 2s infinite}
 
 .course-body{padding:24px}
