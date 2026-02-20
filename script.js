@@ -147,18 +147,23 @@ if (demoForm) {
     const name = document.getElementById('demoName').value.trim();
     const age = document.getElementById('demoAge').value;
     const phone = document.getElementById('demoPhone').value.trim();
+    const city = document.getElementById('demoCity').value.trim();
     const course = document.getElementById('demoCourse');
     const courseLabel = course.options[course.selectedIndex].text;
-    const platform = document.querySelector('input[name="platform"]:checked').value;
-    const platformNames = { zoom: 'Zoom', meet: 'Google Meet', teams: 'MS Teams' };
+    const slot = document.getElementById('demoSlot');
+    const slotLabel = slot.options[slot.selectedIndex].text;
+    const callback = document.getElementById('demoCallback').value;
 
     // Save to Google Sheets
     await saveToSheet({
       name: name,
       age: age,
       phone: phone,
+      city: city,
       course: courseLabel,
-      platform: platformNames[platform]
+      timeslot: slotLabel,
+      callback: callback,
+      platform: 'Google Meet'
     });
 
     // Open WhatsApp with pre-filled message
@@ -166,11 +171,14 @@ if (demoForm) {
       `Student: ${name}%0A` +
       `Age: ${age}%0A` +
       `Phone: ${phone}%0A` +
+      `City: ${city}%0A` +
       `Course: ${courseLabel}%0A` +
-      `Platform: ${platformNames[platform]}%0A%0A` +
+      `Timeslot: ${slotLabel}%0A` +
+      `Callback Time: ${callback}%0A` +
+      `Platform: Google Meet%0A%0A` +
       `Please share the class link. Thank you!`;
 
-    window.open(`https://wa.me/917032696876?text=${msg}`, '_blank');
+    window.open(`https://wa.me/917146745454?text=${msg}`, '_blank');
 
     // Show success
     submitBtn.innerHTML = '&#10003; Booked! Check WhatsApp';
