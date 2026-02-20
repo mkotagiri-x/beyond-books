@@ -1,7 +1,6 @@
 // ==================== GOOGLE SHEETS CONFIG ====================
 // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL BELOW (see SETUP-GUIDE.txt)
-// PASTE YOUR NEW GOOGLE APPS SCRIPT URL HERE (from beyondbooks.mine@gmail.com)
-const GOOGLE_SHEET_URL = '';
+const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzMJCW8IJN81io6BwCVEcncFi-vRCDtB3RJ124kw1J1dfv7Hn4kd8PHNIR1l76HJ3dltg/exec';
 
 // Save lead to Google Sheets
 async function saveToSheet(data) {
@@ -179,7 +178,7 @@ if (demoForm) {
       `Platform: Google Meet%0A%0A` +
       `Please share the class link. Thank you!`;
 
-    window.open(`https://wa.me/917146745454?text=${msg}`, '_blank');
+    window.open(`https://wa.me/917416745454?text=${msg}`, '_blank');
 
     // Show success
     submitBtn.innerHTML = '&#10003; Booked! Check WhatsApp';
