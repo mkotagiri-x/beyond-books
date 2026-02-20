@@ -1,6 +1,7 @@
 // ==================== GOOGLE SHEETS CONFIG ====================
 // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL BELOW (see SETUP-GUIDE.txt)
-const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzJQcM0cquccK6EqYCkJyKoTJ9sp-f2y-NDZNQ3Z3_8x7m1--1bjdp0XZnIDZppfj0/exec';
+// PASTE YOUR NEW GOOGLE APPS SCRIPT URL HERE (from beyondbooks.mine@gmail.com)
+const GOOGLE_SHEET_URL = '';
 
 // Save lead to Google Sheets
 async function saveToSheet(data) {

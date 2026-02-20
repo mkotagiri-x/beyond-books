@@ -1,47 +1,100 @@
 ===============================================================
-  BEYOND BOOKS — FREE DATABASE SETUP GUIDE (Google Sheets)
+  BEYOND BOOKS — GOOGLE SHEETS DATABASE SETUP
+  Account: beyondbooks.mine@gmail.com
 ===============================================================
 
 TOTAL COST: Rs. 0
-TIME TO SET UP: ~10 minutes
+TIME: ~10 minutes
 
-This guide connects your website forms to a Google Sheet.
-Every demo booking and enquiry will be saved automatically,
-and you'll get an email notification for each new entry.
+Every time someone books a demo on your website, their details
+(Name, Age, Phone, City, Course, Timeslot, Callback Time) will
+be saved to your Google Sheet + you get an email alert.
 
----------------------------------------------------------------
-STEP 1: CREATE THE GOOGLE SHEET
----------------------------------------------------------------
+===============================================================
+  STEP 1: LOG IN TO THE RIGHT ACCOUNT
+===============================================================
+
+1. Open Chrome browser
+2. Go to https://accounts.google.com
+3. Sign in with:
+     Email:    beyondbooks.mine@gmail.com
+     Password: (your password)
+4. Make sure this is the ACTIVE account (check top-right avatar)
+
+   TIP: If you have multiple Google accounts, open an
+   Incognito window (Ctrl+Shift+N) and sign in fresh
+   with beyondbooks.mine@gmail.com to avoid confusion.
+
+
+===============================================================
+  STEP 2: CREATE THE GOOGLE SHEET
+===============================================================
 
 1. Go to https://sheets.google.com
-2. Create a new blank spreadsheet
-3. Rename it to "Beyond Books - Student Data"
-4. In the FIRST ROW (Row 1), add these headers exactly:
+   (Make sure you're logged in as beyondbooks.mine@gmail.com)
 
-   A1: Timestamp
-   B1: Name
-   C1: Age
-   D1: Phone
-   E1: Course
-   F1: Platform
-   G1: Status
-   H1: Notes
+2. Click the big "+" button OR "Blank spreadsheet"
 
-5. Rename the sheet tab at the bottom to: "Leads"
-   (Right-click the tab "Sheet1" → Rename → type "Leads")
+3. A new sheet opens. At the top left it says "Untitled spreadsheet"
+   → Click on it and rename to:
+   Beyond Books - Student Leads
 
----------------------------------------------------------------
-STEP 2: ADD THE APPS SCRIPT
----------------------------------------------------------------
+4. Now in the FIRST ROW (Row 1), type these headers in each cell:
 
-1. In your Google Sheet, go to:
-   Extensions → Apps Script
+   Cell A1 → Timestamp
+   Cell B1 → Name
+   Cell C1 → Age
+   Cell D1 → Phone
+   Cell E1 → City
+   Cell F1 → Course
+   Cell G1 → Timeslot
+   Cell H1 → Callback Time
+   Cell I1 → Platform
+   Cell J1 → Status
+   Cell K1 → Notes
 
-2. DELETE everything in the code editor
+   TIP: Click cell A1, type "Timestamp", press Tab key to
+   move to B1, type "Name", press Tab, and so on.
 
-3. PASTE the following code (copy everything between the lines):
+5. Now look at the BOTTOM of the sheet. You'll see a tab
+   called "Sheet1". Right-click on it → Choose "Rename"
+   → Type: Leads → Press Enter
 
-- - - - - - - - COPY FROM HERE - - - - - - - -
+6. OPTIONAL: Select Row 1, then click Format → Bold (Ctrl+B)
+   to make headers stand out.
+
+   Your sheet should now look like:
+
+   | Timestamp | Name | Age | Phone | City | Course | Timeslot | Callback Time | Platform | Status | Notes |
+   |-----------|------|-----|-------|------|--------|----------|---------------|----------|--------|-------|
+   |           |      |     |       |      |        |          |               |          |        |       |
+
+
+===============================================================
+  STEP 3: OPEN APPS SCRIPT
+===============================================================
+
+1. In your Google Sheet, look at the top menu bar
+2. Click: Extensions → Apps Script
+
+   This opens a NEW TAB with the Apps Script editor.
+   It looks like a code editor with some default code.
+
+3. You'll see some code that says:
+   function myFunction() {
+   }
+
+4. SELECT ALL that code (Ctrl+A) and DELETE it.
+   The editor should now be completely empty.
+
+
+===============================================================
+  STEP 4: PASTE THIS CODE
+===============================================================
+
+Copy EVERYTHING below (from the first "function" to the last "}"):
+
+------- COPY START -------
 
 function doPost(e) {
   try {
@@ -53,27 +106,30 @@ function doPost(e) {
       data.name || "",
       data.age || "",
       data.phone || "",
+      data.city || "",
       data.course || "",
-      data.platform || "",
+      data.timeslot || "",
+      data.callback || "",
+      data.platform || "Google Meet",
       "New Lead",
       ""
     ]);
 
-    // Send email notification
-    var email = Session.getActiveUser().getEmail();
-    if (email) {
-      MailApp.sendEmail({
-        to: email,
-        subject: "New Beyond Books Lead: " + data.name,
-        body: "New demo booking!\n\n" +
-              "Name: " + data.name + "\n" +
-              "Age: " + data.age + "\n" +
-              "Phone: " + data.phone + "\n" +
-              "Course: " + data.course + "\n" +
-              "Platform: " + data.platform + "\n\n" +
-              "Check your sheet: " + SpreadsheetApp.getActiveSpreadsheet().getUrl()
-      });
-    }
+    // Send email notification to beyondbooks.mine@gmail.com
+    MailApp.sendEmail({
+      to: "beyondbooks.mine@gmail.com",
+      subject: "New Demo Booking: " + data.name + " - " + data.course,
+      body: "New demo booking on Beyond Books!\n\n" +
+            "Student: " + data.name + "\n" +
+            "Age: " + data.age + "\n" +
+            "Phone: " + data.phone + "\n" +
+            "City: " + data.city + "\n" +
+            "Course: " + data.course + "\n" +
+            "Timeslot: " + data.timeslot + "\n" +
+            "Callback Time: " + data.callback + "\n" +
+            "Platform: Google Meet\n\n" +
+            "View all leads: " + SpreadsheetApp.getActiveSpreadsheet().getUrl()
+    });
 
     return ContentService
       .createTextOutput(JSON.stringify({ status: "success" }))
@@ -92,65 +148,139 @@ function doGet(e) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-- - - - - - - - COPY UNTIL HERE - - - - - - - -
+------- COPY END -------
 
-4. Click the SAVE icon (or Ctrl+S)
-5. Name the project: "Beyond Books API"
+5. After pasting, click the SAVE button (floppy disk icon)
+   OR press Ctrl+S
 
----------------------------------------------------------------
-STEP 3: DEPLOY AS WEB APP
----------------------------------------------------------------
+6. It will ask you to name the project.
+   Type: Beyond Books API
+   Click OK
 
-1. Click "Deploy" button (top right) → "New deployment"
-2. Click the gear icon next to "Select type" → choose "Web app"
-3. Set these options:
-   - Description: "Beyond Books Form Handler"
-   - Execute as: "Me"
-   - Who has access: "Anyone"
-4. Click "Deploy"
-5. Click "Authorize access" → Choose your Google account
-6. If you see "Google hasn't verified this app":
-   - Click "Advanced" (bottom left)
-   - Click "Go to Beyond Books API (unsafe)"
-   - Click "Allow"
-7. COPY the "Web app URL" — it looks like:
-   https://script.google.com/macros/s/XXXXX.../exec
 
----------------------------------------------------------------
-STEP 4: ADD THE URL TO YOUR WEBSITE
----------------------------------------------------------------
+===============================================================
+  STEP 5: DEPLOY AS WEB APP
+===============================================================
 
-1. Open the file: beyond-books/script.js
-2. Find this line near the top:
-   const GOOGLE_SHEET_URL = '';
-3. Paste your Web App URL between the quotes:
-   const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/XXXXX.../exec';
-4. Save the file
-5. Commit and push to GitHub:
-   git add -A && git commit -m "Add Google Sheets integration" && git push
+1. At the top right of the Apps Script editor, you'll see
+   a blue button that says "Deploy"
+   → Click it
+   → Click "New deployment"
 
----------------------------------------------------------------
-DONE! HERE'S WHAT HAPPENS NOW:
----------------------------------------------------------------
+2. A popup appears. Next to "Select type", click the
+   GEAR ICON (⚙️)
+   → Choose "Web app"
 
-1. User fills the demo form on your website
-2. Data is saved to your Google Sheet automatically
-3. You get an email notification with the student details
-4. The user's WhatsApp message opens with their details
-5. You can track all leads in your Google Sheet
+3. Fill in these fields:
 
----------------------------------------------------------------
-BONUS TIPS (ALL FREE):
----------------------------------------------------------------
+   Description:       Beyond Books Form Handler
+   Execute as:        Me (beyondbooks.mine@gmail.com)
+   Who has access:    Anyone
 
-- Add Google Analytics:
-  Go to https://analytics.google.com → Create account →
-  Add the tracking code to your index.html
+   IMPORTANT: "Who has access" MUST be set to "Anyone"
+   (not "Anyone with Google Account")
 
-- Use Google Sheet filters to sort leads by course, date, status
+4. Click the blue "Deploy" button
 
-- Add a "Subscribed" status column to track who converted
+5. It will ask "Authorize access"
+   → Click "Authorize access"
 
-- Share the sheet with your team so everyone can see leads
+6. A Google sign-in window pops up:
+   → Choose beyondbooks.mine@gmail.com
+
+7. You may see a warning screen:
+   "Google hasn't verified this app"
+
+   → Click "Advanced" (small text at bottom left)
+   → Click "Go to Beyond Books API (unsafe)"
+   → Click "Allow"
+
+   (This is safe — it's YOUR own script accessing YOUR sheet)
+
+8. SUCCESS! You'll see a screen with:
+   "Web app URL: https://script.google.com/macros/s/XXXXXXX.../exec"
+
+   → Click the COPY button next to the URL
+   → SAVE this URL somewhere (paste it in Notepad or Notes)
+
+   This URL is your API. Keep it safe.
+
+
+===============================================================
+  STEP 6: CONNECT TO YOUR WEBSITE
+===============================================================
+
+You have 2 options:
+
+OPTION A — Tell me the URL (easiest):
+   Just send me the URL you copied, and I'll add it
+   to the website and push it live. Done!
+
+OPTION B — Do it yourself:
+   1. Open file: /Users/mkotagiri/beyond-books/script.js
+   2. Find this line at the top:
+      const GOOGLE_SHEET_URL = '';
+   3. Paste your URL between the quotes:
+      const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/XXXXX.../exec';
+   4. Save the file
+   5. Open Terminal and run:
+      cd /Users/mkotagiri/beyond-books
+      git add -A
+      git commit -m "Connect new Google Sheet"
+      git push
+
+
+===============================================================
+  STEP 7: TEST IT
+===============================================================
+
+1. Go to https://mkotagiri-x.github.io/beyond-books/
+2. Scroll to "Book Your 2 Free Demo Classes"
+3. Fill the form with test data and submit
+4. Check two things:
+   a. Your Google Sheet → a new row should appear
+   b. Your Gmail (beyondbooks.mine@gmail.com) → email alert
+
+If both work, you're all set!
+
+
+===============================================================
+  WHAT HAPPENS WHEN SOMEONE BOOKS A DEMO:
+===============================================================
+
+  User fills form on website
+       ↓
+  Data saved to Google Sheet automatically
+       ↓
+  Email alert sent to beyondbooks.mine@gmail.com
+       ↓
+  WhatsApp opens with student's details
+       ↓
+  You call them back at their preferred time
+       ↓
+  Send Google Meet link for demo class
+
+
+===============================================================
+  TROUBLESHOOTING
+===============================================================
+
+Problem: Form submits but no data in sheet
+Fix:     Make sure the sheet tab is named exactly "Leads"
+         (case sensitive). Check the URL in script.js.
+
+Problem: No email received
+Fix:     Check spam folder in beyondbooks.mine@gmail.com.
+         Make sure you deployed the script as "Me".
+
+Problem: "Authorization required" error
+Fix:     Re-deploy: Apps Script → Deploy → Manage deployments
+         → Edit (pencil icon) → Version: New version → Deploy
+
+Problem: Need to update the code
+Fix:     Edit the code in Apps Script → Deploy → Manage
+         deployments → Edit → Version: New version → Deploy
+         (The URL stays the same)
+
 
 ===============================================================
