@@ -152,7 +152,8 @@ if (demoForm) {
     const courseLabel = course.options[course.selectedIndex].text;
     const slot = document.getElementById('demoSlot');
     const slotLabel = slot.options[slot.selectedIndex].text;
-    const callback = document.getElementById('demoCallback').value;
+    const callbackEl = document.getElementById('demoCallback');
+    const callback = callbackEl.options[callbackEl.selectedIndex].text;
 
     // Save to Google Sheets
     await saveToSheet({
