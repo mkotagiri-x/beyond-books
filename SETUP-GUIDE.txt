@@ -262,16 +262,29 @@ If both work, you're all set!
 
 
 ===============================================================
-  STEP 8: SET UP AUTO MEET LINK EMAILS (Enrollment Feature)
+  STEP 8: SET UP AUTO MEET LINK + UNIQUE ACCESS CODES
 ===============================================================
 
-When you change a student's Status to "Enrolled" in the sheet,
-they'll automatically get an email with their Google Meet link.
+When you change a student's Status to "Enrolled" in the sheet:
+  • A unique access code is auto-generated (e.g. BB7K2M9X)
+  • Student gets a welcome email with their code + Meet link
+  • Student uses that code on the classes page to see ONLY
+    their enrolled course (personalized portal)
 
-PART A — Create the MeetLinks tab:
+PART A — Add "Access Code" column to Leads sheet:
 
-1. In your Google Sheet, click the "+" button at the bottom
-   (next to the "Leads" tab) to add a new sheet tab.
+1. In your Google Sheet "Leads" tab, add a new header:
+   Cell L1 → Access Code
+
+   Your headers should now be:
+   A: Timestamp | B: Name | C: Age | D: Phone | E: City
+   F: Course | G: Timeslot | H: Callback Time | I: Platform
+   J: Status | K: Notes | L: Access Code
+
+PART B — Create the MeetLinks tab:
+
+1. Click the "+" button at the bottom (next to "Leads" tab)
+   to add a new sheet tab.
 
 2. Rename this new tab to: MeetLinks
    (Right-click the tab → Rename → Type: MeetLinks)
@@ -281,28 +294,24 @@ PART A — Create the MeetLinks tab:
    Cell A1 → Course
    Cell B1 → Meet Link
 
-4. Fill in your courses and their Google Meet links:
+4. Fill in your courses and their Meet links:
 
-   | Course           | Meet Link                              |
-   |------------------|----------------------------------------|
-   | Art & Craft      | https://meet.google.com/xxx-xxxx-xxx   |
-   | Chess            | https://meet.google.com/xxx-xxxx-xxx   |
-   | Classical Dance   | https://meet.google.com/xxx-xxxx-xxx   |
-   | Classical Music   | https://meet.google.com/xxx-xxxx-xxx   |
-   | Abacus           | https://meet.google.com/xxx-xxxx-xxx   |
+   | Course            | Meet Link                              |
+   |-------------------|----------------------------------------|
+   | Art & Craft       | https://meet.google.com/xnc-ezqk-yjd  |
+   | Chess             | https://meet.google.com/ndf-dpzi-kcd   |
+   | Classical Dance   | https://meet.google.com/jyg-uiaq-inf   |
+   | Classical Music   | https://meet.google.com/wow-vpez-tbk   |
+   | Abacus            | https://meet.google.com/hwx-qreu-rmz   |
 
-   HOW TO CREATE A MEET LINK:
-   → Go to https://meet.google.com
-   → Click "New meeting" → "Create a meeting for later"
-   → Copy the link and paste it in the sheet
-   (These links don't expire, you can reuse them)
+   IMPORTANT: Course names must match EXACTLY with what's
+   in the Leads sheet (same spelling, same case).
 
-PART B — Update the Apps Script:
+PART C — Update the Apps Script:
 
 1. Go to your Google Sheet → Extensions → Apps Script
 2. SELECT ALL the existing code (Ctrl+A) and DELETE it
-3. Paste the NEW code below (it includes everything from
-   before PLUS the enrollment email feature):
+3. Paste the NEW code below:
 
 ------- COPY START -------
 
@@ -322,6 +331,7 @@ function doPost(e) {
       data.callback || "",
       data.platform || "Google Meet",
       "New Lead",
+      "",
       ""
     ]);
 
@@ -351,18 +361,85 @@ function doPost(e) {
   }
 }
 
+// ===== VERIFY STUDENT ACCESS CODE =====
 function doGet(e) {
-  return ContentService
-    .createTextOutput(JSON.stringify({ status: "ok", message: "Beyond Books API is running" }))
-    .setMimeType(ContentService.MimeType.JSON);
+  try {
+    var code = (e.parameter.code || "").trim().toUpperCase();
+
+    if (!code) {
+      return ContentService
+        .createTextOutput(JSON.stringify({ status: "error", message: "No code provided" }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Leads");
+    var data = sheet.getDataRange().getValues();
+
+    // Search for the access code in column L (index 11)
+    for (var i = 1; i < data.length; i++) {
+      var rowCode = (data[i][11] || "").toString().trim().toUpperCase();
+      if (rowCode === code) {
+        var name = data[i][1];
+        var course = data[i][5];
+        var status = data[i][9];
+
+        if (status.toString().trim().toLowerCase() !== "enrolled") {
+          return ContentService
+            .createTextOutput(JSON.stringify({ status: "error", message: "Student not enrolled" }))
+            .setMimeType(ContentService.MimeType.JSON);
+        }
+
+        // Look up Meet link
+        var meetSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("MeetLinks");
+        var meetLink = "";
+        if (meetSheet) {
+          var meetData = meetSheet.getDataRange().getValues();
+          for (var j = 1; j < meetData.length; j++) {
+            if (meetData[j][0].toString().trim().toLowerCase() === course.toString().trim().toLowerCase()) {
+              meetLink = meetData[j][1];
+              break;
+            }
+          }
+        }
+
+        return ContentService
+          .createTextOutput(JSON.stringify({
+            status: "success",
+            name: name,
+            course: course,
+            meetLink: meetLink
+          }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ status: "error", message: "Invalid code" }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ status: "error", message: error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
 }
 
-// ===== AUTO SEND MEET LINK ON ENROLLMENT =====
+// ===== GENERATE UNIQUE ACCESS CODE =====
+function generateCode() {
+  var chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  var code = "BB";
+  for (var i = 0; i < 6; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+}
+
+// ===== AUTO ENROLL: GENERATE CODE + SEND EMAIL =====
 function onEdit(e) {
   var sheet = e.source.getActiveSheet();
   var range = e.range;
 
-  // Only trigger on the "Leads" sheet, column J (Status)
+  // Only trigger on "Leads" sheet, column J (Status)
   if (sheet.getName() !== "Leads") return;
   if (range.getColumn() !== 10) return;
 
@@ -374,6 +451,13 @@ function onEdit(e) {
   var phone = sheet.getRange(row, 4).getValue();
   var city = sheet.getRange(row, 5).getValue();
   var course = sheet.getRange(row, 6).getValue();
+
+  // Generate unique access code (if not already set)
+  var existingCode = sheet.getRange(row, 12).getValue();
+  var accessCode = existingCode || generateCode();
+  if (!existingCode) {
+    sheet.getRange(row, 12).setValue(accessCode);
+  }
 
   // Look up Google Meet link from MeetLinks tab
   var meetSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("MeetLinks");
@@ -393,30 +477,28 @@ function onEdit(e) {
     return;
   }
 
-  // Check if there's an email in the Notes column or use phone for WhatsApp
+  // Send email to student (if email is in Notes column)
   var notes = sheet.getRange(row, 11).getValue();
-
-  // Send email to the student (if email is in Notes column)
   if (notes && notes.toString().includes("@")) {
     MailApp.sendEmail({
       to: notes.toString().trim(),
       subject: "Welcome to Beyond Books - " + course + "!",
       body: "Hi " + name + "!\n\n" +
             "Welcome to Beyond Books! You are now enrolled in " + course + ".\n\n" +
+            "YOUR PERSONAL ACCESS CODE: " + accessCode + "\n\n" +
+            "Use this code to access your class link anytime at:\n" +
+            "https://beyond-books-live.netlify.app/classes.html\n\n" +
             "Your Google Meet Class Link:\n" +
             meetLink + "\n\n" +
-            "Save this link — you'll use it to join every class.\n" +
+            "Save this code — it's unique to you.\n" +
             "Your schedule will be shared on WhatsApp.\n\n" +
-            "You can also find your class link anytime at:\n" +
-            "https://beyond-books-live.netlify.app/classes.html\n" +
-            "Access Code: BEYOND2025\n\n" +
             "See you in class!\n" +
             "Team Beyond Books\n" +
             "Phone: 7416745454"
     });
   }
 
-  // Always notify you (the admin)
+  // Always notify admin
   MailApp.sendEmail({
     to: "beyondbooks.mine@gmail.com",
     subject: "Student Enrolled: " + name + " - " + course,
@@ -425,11 +507,13 @@ function onEdit(e) {
           "Phone: " + phone + "\n" +
           "City: " + city + "\n" +
           "Course: " + course + "\n" +
+          "Access Code: " + accessCode + "\n" +
           "Meet Link: " + meetLink + "\n\n" +
-          "Send this Meet link to the student on WhatsApp too."
+          "Share this access code with the student on WhatsApp:\n" +
+          accessCode
   });
 
-  // Mark with timestamp in Notes (append, don't overwrite email)
+  // Append enrollment timestamp to Notes
   var existingNotes = sheet.getRange(row, 11).getValue();
   var enrollNote = "Enrolled: " + new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
   sheet.getRange(row, 11).setValue(existingNotes ? existingNotes + " | " + enrollNote : enrollNote);
@@ -454,6 +538,9 @@ function onEdit(e) {
    → Deploy → Manage deployments → Edit (pencil icon)
    → Version: New version → Deploy
 
+   IMPORTANT: You MUST re-deploy for the doGet changes to work.
+   The classes page calls your API to verify access codes.
+
 
 HOW IT WORKS:
 
@@ -461,18 +548,22 @@ HOW IT WORKS:
        ↓
   You call the student, confirm enrollment
        ↓
-  In Google Sheet, change Status to "Enrolled"
+  Add student's email to Notes column (K) [optional but recommended]
+       ↓
+  Change Status (J) to "Enrolled"
        ↓
   AUTOMATICALLY:
-    • If student's email is in Notes column → sends them
-      a welcome email with their Meet link
-    • Sends YOU an admin email with the Meet link
-      (so you can also share it on WhatsApp)
-    • Adds enrollment timestamp to Notes column
+    • Unique code generated (e.g. BB7K2M9X) → saved in column L
+    • If email in Notes → student gets welcome email with code
+    • YOU get admin email with the code + Meet link
+    • Share the code on WhatsApp too
+       ↓
+  Student goes to classes page → enters their code
+       ↓
+  Sees ONLY their course + personalized greeting + Join button
 
-  TIP: When a new lead comes in, add their email to the
-  Notes column (K). Then when you mark "Enrolled", they
-  get the welcome email automatically.
+  TO REVOKE ACCESS: Just delete the code from column L
+  or change Status back from "Enrolled"
 
 
 ===============================================================

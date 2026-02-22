@@ -32,7 +32,6 @@
       overflow-x: hidden;
     }
 
-    /* Background gradient orbs */
     body::before, body::after {
       content: '';
       position: fixed;
@@ -86,7 +85,7 @@
       font-size: 0.95rem;
     }
 
-    /* === GATE (Access Code Screen) === */
+    /* === GATE === */
     .gate {
       display: flex;
       flex-direction: column;
@@ -154,19 +153,41 @@
       transform: translateY(-2px);
       box-shadow: 0 8px 30px rgba(108,60,224,0.4);
     }
+    .gate-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
     .gate-error {
       color: #f87171;
       font-size: 0.9rem;
       margin-top: 14px;
       display: none;
     }
+    .help-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .help-link a {
+      color: rgba(255,255,255,0.3);
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+    .help-link a:hover {
+      color: var(--primary-light);
+    }
 
-    /* === CLASSES (After Access) === */
+    /* === CLASSES === */
     .classes {
       display: none;
     }
     .classes.visible {
       display: block;
+      animation: fadeUp 0.5s ease;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .welcome-bar {
@@ -187,6 +208,12 @@
     }
     .welcome-bar .welcome-text strong {
       color: #fff;
+      font-size: 1.1rem;
+    }
+    .welcome-bar .welcome-code {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.3);
+      margin-top: 4px;
     }
     .logout-btn {
       padding: 8px 20px;
@@ -204,21 +231,15 @@
       color: var(--accent);
     }
 
-    /* Course cards */
-    .course-list {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
+    /* Course card */
     .class-card {
       background: var(--glass);
       border: 1px solid var(--glass-border);
       border-radius: var(--radius);
-      padding: 28px;
+      padding: 32px;
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 24px;
       transition: transform 0.2s, border-color 0.2s;
     }
     .class-card:hover {
@@ -226,13 +247,13 @@
       border-color: rgba(255,255,255,0.2);
     }
     .class-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
+      font-size: 32px;
       flex-shrink: 0;
     }
     .class-icon.art { background: linear-gradient(135deg, #f472b6, #ec4899); }
@@ -246,28 +267,31 @@
     }
     .class-info h3 {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.15rem;
+      font-size: 1.25rem;
       font-weight: 700;
       margin-bottom: 4px;
     }
     .class-info p {
       color: rgba(255,255,255,0.4);
-      font-size: 0.85rem;
+      font-size: 0.9rem;
     }
 
     .join-btn {
-      padding: 12px 24px;
+      padding: 14px 32px;
       border: none;
-      border-radius: 12px;
+      border-radius: 14px;
       background: linear-gradient(135deg, var(--primary), var(--accent));
       color: #fff;
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.9rem;
+      font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
       text-decoration: none;
       transition: transform 0.2s, box-shadow 0.2s;
       white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
     .join-btn:hover {
       transform: translateY(-2px);
@@ -293,6 +317,19 @@
       flex-shrink: 0;
     }
 
+    /* No class message */
+    .no-class {
+      text-align: center;
+      padding: 40px 20px;
+      color: rgba(255,255,255,0.4);
+    }
+    .no-class h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.2rem;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 8px;
+    }
+
     /* Footer */
     .page-footer {
       text-align: center;
@@ -307,18 +344,18 @@
       text-decoration: none;
     }
 
-    /* Help link */
-    .help-link {
-      text-align: center;
-      margin-top: 20px;
+    /* Loading spinner */
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 3px solid rgba(255,255,255,0.2);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      display: inline-block;
     }
-    .help-link a {
-      color: rgba(255,255,255,0.3);
-      text-decoration: none;
-      font-size: 0.85rem;
-    }
-    .help-link a:hover {
-      color: var(--primary-light);
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
     @media (max-width: 600px) {
@@ -329,7 +366,7 @@
       }
       .join-btn {
         width: 100%;
-        text-align: center;
+        justify-content: center;
       }
       .gate-form {
         flex-direction: column;
@@ -348,80 +385,37 @@
     <div class="header">
       <a href="index.html"><img src="assets/logo.svg" alt="Beyond Books" class="logo-img" /></a>
       <h1><span>My Classes</span></h1>
-      <p>Access your Google Meet class links</p>
+      <p>Access your Google Meet class link</p>
     </div>
 
     <!-- Access Code Gate -->
     <div class="gate" id="gate">
       <div class="gate-icon">&#128274;</div>
-      <h2>Enter Access Code</h2>
-      <p>This page is for enrolled students only.<br>Your access code was shared on WhatsApp or email.</p>
+      <h2>Enter Your Access Code</h2>
+      <p>Your unique code was shared on WhatsApp or email.<br>It looks like <strong style="color:#a78bfa;">BB7K2M9X</strong></p>
       <div class="gate-form">
-        <input type="text" class="gate-input" id="codeInput" placeholder="ACCESS CODE" maxlength="20" autocomplete="off" />
+        <input type="text" class="gate-input" id="codeInput" placeholder="BBXXXXXX" maxlength="8" autocomplete="off" />
         <button class="gate-btn" id="codeBtn">Enter</button>
       </div>
-      <p class="gate-error" id="codeError">Incorrect code. Please check WhatsApp or contact us.</p>
+      <p class="gate-error" id="codeError"></p>
       <div class="help-link">
         <a href="https://wa.me/917416745454?text=Hi%2C%20I%20need%20my%20student%20access%20code%20for%20Beyond%20Books%20classes." target="_blank">Don't have a code? Message us on WhatsApp</a>
       </div>
     </div>
 
-    <!-- Classes (shown after code) -->
+    <!-- Classes (shown after verification) -->
     <div class="classes" id="classes">
 
       <div class="welcome-bar">
-        <div class="welcome-text">Welcome, <strong>Beyond Books Student</strong></div>
+        <div>
+          <div class="welcome-text">Welcome, <strong id="studentName"></strong></div>
+          <div class="welcome-code">Code: <span id="studentCode"></span></div>
+        </div>
         <button class="logout-btn" id="logoutBtn">Lock Page</button>
       </div>
 
-      <div class="course-list">
-
-        <div class="class-card">
-          <div class="class-icon art">&#127912;</div>
-          <div class="class-info">
-            <h3>Art & Craft</h3>
-            <p>Drawing, painting, origami & creative projects</p>
-          </div>
-          <a href="https://meet.google.com" class="join-btn" id="link-art" target="_blank">Join Class</a>
-        </div>
-
-        <div class="class-card">
-          <div class="class-icon chess">&#9823;</div>
-          <div class="class-info">
-            <h3>Chess</h3>
-            <p>Strategy, critical thinking & problem solving</p>
-          </div>
-          <a href="https://meet.google.com" class="join-btn" id="link-chess" target="_blank">Join Class</a>
-        </div>
-
-        <div class="class-card">
-          <div class="class-icon dance">&#128131;</div>
-          <div class="class-info">
-            <h3>Classical Dance</h3>
-            <p>Bharatanatyam, Kuchipudi & graceful movements</p>
-          </div>
-          <a href="https://meet.google.com" class="join-btn" id="link-dance" target="_blank">Join Class</a>
-        </div>
-
-        <div class="class-card">
-          <div class="class-icon music">&#127925;</div>
-          <div class="class-info">
-            <h3>Classical Music</h3>
-            <p>Carnatic & Hindustani vocal training</p>
-          </div>
-          <a href="https://meet.google.com" class="join-btn" id="link-music" target="_blank">Join Class</a>
-        </div>
-
-        <div class="class-card">
-          <div class="class-icon abacus">&#129518;</div>
-          <div class="class-info">
-            <h3>Abacus</h3>
-            <p>Mental math, speed & accuracy with numbers</p>
-          </div>
-          <a href="https://meet.google.com" class="join-btn" id="link-abacus" target="_blank">Join Class</a>
-        </div>
-
-      </div>
+      <!-- Dynamic course card inserted here -->
+      <div id="courseContainer"></div>
 
       <div class="info-note">
         <span>&#128161;</span>
@@ -441,9 +435,17 @@
   </div>
 
   <script>
-    // ===== ACCESS CODE CONFIG =====
-    // Change this code anytime. Share it only with enrolled students.
-    const ACCESS_CODE = 'BEYOND2025';
+    // ===== YOUR GOOGLE APPS SCRIPT URL =====
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzMJCW8IJN81io6BwCVEcncFi-vRCDtB3RJ124kw1J1dfv7Hn4kd8PHNIR1l76HJ3dltg/exec';
+
+    // Course icon + style mapping
+    const COURSE_MAP = {
+      'art & craft':     { icon: '&#127912;', css: 'art',    desc: 'Drawing, painting, origami & creative projects' },
+      'chess':           { icon: '&#9823;',   css: 'chess',  desc: 'Strategy, critical thinking & problem solving' },
+      'classical dance': { icon: '&#128131;', css: 'dance',  desc: 'Bharatanatyam, Kuchipudi & graceful movements' },
+      'classical music': { icon: '&#127925;', css: 'music',  desc: 'Carnatic & Hindustani vocal training' },
+      'abacus':          { icon: '&#129518;', css: 'abacus', desc: 'Mental math, speed & accuracy with numbers' }
+    };
 
     const gate = document.getElementById('gate');
     const classes = document.getElementById('classes');
@@ -451,56 +453,114 @@
     const codeBtn = document.getElementById('codeBtn');
     const codeError = document.getElementById('codeError');
     const logoutBtn = document.getElementById('logoutBtn');
+    const courseContainer = document.getElementById('courseContainer');
+    const studentNameEl = document.getElementById('studentName');
+    const studentCodeEl = document.getElementById('studentCode');
 
-    // ===== MEET LINKS CONFIG =====
-    // Replace these with your actual Google Meet links
-    const MEET_LINKS = {
-      art:    'https://meet.google.com/xnc-ezqk-yjd',
-      chess:  'https://meet.google.com/ndf-dpzi-kcd',
-      dance:  'https://meet.google.com/jyg-uiaq-inf',
-      music:  'https://meet.google.com/wow-vpez-tbk',
-      abacus: 'https://meet.google.com/hwx-qreu-rmz'
-    };
-
-    function applyMeetLinks() {
-      document.getElementById('link-art').href = MEET_LINKS.art;
-      document.getElementById('link-chess').href = MEET_LINKS.chess;
-      document.getElementById('link-dance').href = MEET_LINKS.dance;
-      document.getElementById('link-music').href = MEET_LINKS.music;
-      document.getElementById('link-abacus').href = MEET_LINKS.abacus;
+    function showError(msg) {
+      codeError.textContent = msg;
+      codeError.style.display = 'block';
+      codeInput.style.borderColor = '#f87171';
+      setTimeout(() => { codeInput.style.borderColor = ''; }, 2000);
     }
 
-    function unlock() {
-      gate.style.display = 'none';
-      classes.classList.add('visible');
-      applyMeetLinks();
-      sessionStorage.setItem('bb_access', 'true');
+    function renderCourse(data) {
+      const courseLower = data.course.toString().trim().toLowerCase();
+      const info = COURSE_MAP[courseLower] || { icon: '&#128218;', css: 'art', desc: data.course };
+
+      studentNameEl.textContent = data.name;
+      studentCodeEl.textContent = sessionStorage.getItem('bb_code') || '';
+
+      let html = '';
+      if (data.meetLink) {
+        html = `
+          <div class="class-card">
+            <div class="class-icon ${info.css}">${info.icon}</div>
+            <div class="class-info">
+              <h3>${data.course}</h3>
+              <p>${info.desc}</p>
+            </div>
+            <a href="${data.meetLink}" class="join-btn" target="_blank">&#128247; Join Class</a>
+          </div>`;
+      } else {
+        html = `
+          <div class="class-card">
+            <div class="class-icon ${info.css}">${info.icon}</div>
+            <div class="class-info">
+              <h3>${data.course}</h3>
+              <p>${info.desc}</p>
+            </div>
+            <span class="join-btn" style="opacity:0.5;cursor:default;">Link coming soon</span>
+          </div>`;
+      }
+
+      courseContainer.innerHTML = html;
+    }
+
+    async function verifyCode(code) {
+      codeBtn.disabled = true;
+      codeBtn.innerHTML = '<span class="spinner"></span>';
+      codeError.style.display = 'none';
+
+      try {
+        const res = await fetch(API_URL + '?code=' + encodeURIComponent(code));
+        const json = await res.json();
+
+        if (json.status === 'success') {
+          // Store in session
+          sessionStorage.setItem('bb_code', code);
+          sessionStorage.setItem('bb_data', JSON.stringify(json));
+
+          // Show classes
+          gate.style.display = 'none';
+          classes.classList.add('visible');
+          renderCourse(json);
+        } else {
+          showError(json.message === 'Invalid code'
+            ? 'Invalid code. Check WhatsApp or contact us.'
+            : json.message === 'Student not enrolled'
+            ? 'Your enrollment is not active. Contact us on WhatsApp.'
+            : 'Something went wrong. Please try again.');
+        }
+      } catch (err) {
+        showError('Could not connect. Please check your internet and try again.');
+      }
+
+      codeBtn.disabled = false;
+      codeBtn.textContent = 'Enter';
     }
 
     function lock() {
       gate.style.display = '';
       classes.classList.remove('visible');
+      courseContainer.innerHTML = '';
       codeInput.value = '';
       codeError.style.display = 'none';
-      sessionStorage.removeItem('bb_access');
+      sessionStorage.removeItem('bb_code');
+      sessionStorage.removeItem('bb_data');
     }
 
-    // Check if already unlocked this session
-    if (sessionStorage.getItem('bb_access') === 'true') {
-      unlock();
+    // Restore session
+    const savedCode = sessionStorage.getItem('bb_code');
+    const savedData = sessionStorage.getItem('bb_data');
+    if (savedCode && savedData) {
+      try {
+        const data = JSON.parse(savedData);
+        gate.style.display = 'none';
+        classes.classList.add('visible');
+        renderCourse(data);
+      } catch (e) {
+        lock();
+      }
     }
 
     codeBtn.addEventListener('click', () => {
-      const entered = codeInput.value.trim().toUpperCase();
-      if (entered === ACCESS_CODE) {
-        unlock();
-      } else {
-        codeError.style.display = 'block';
-        codeInput.style.borderColor = '#f87171';
-        setTimeout(() => {
-          codeInput.style.borderColor = '';
-        }, 2000);
+      const code = codeInput.value.trim().toUpperCase();
+      if (!code) {
+        showError('Please enter your access code.');
+        return;
       }
+      verifyCode(code);
     });
 
     codeInput.addEventListener('keydown', (e) => {
