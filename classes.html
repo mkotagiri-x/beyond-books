@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Classes - Beyond Books</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#6c3ce0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="assets/logo-icon.svg" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary: #6c3ce0;
+      --primary-light: #a78bfa;
+      --accent: #ec4899;
+      --dark: #0f0a1a;
+      --light: #f8f6ff;
+      --glass: rgba(255,255,255,0.06);
+      --glass-border: rgba(255,255,255,0.10);
+      --radius: 20px;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--dark);
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Background gradient orbs */
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.3;
+      z-index: 0;
+    }
+    body::before {
+      width: 500px; height: 500px;
+      background: var(--primary);
+      top: -100px; left: -100px;
+    }
+    body::after {
+      width: 400px; height: 400px;
+      background: var(--accent);
+      bottom: -100px; right: -100px;
+    }
+
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .header .logo-img {
+      height: 48px;
+      margin-bottom: 16px;
+    }
+    .header h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .header h1 span {
+      background: linear-gradient(135deg, var(--primary-light), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header p {
+      color: rgba(255,255,255,0.5);
+      font-size: 0.95rem;
+    }
+
+    /* === GATE (Access Code Screen) === */
+    .gate {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 60vh;
+      text-align: center;
+    }
+    .gate-icon {
+      font-size: 64px;
+      margin-bottom: 24px;
+    }
+    .gate h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .gate p {
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 30px;
+      font-size: 0.95rem;
+    }
+    .gate-form {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+      max-width: 400px;
+    }
+    .gate-input {
+      flex: 1;
+      padding: 14px 20px;
+      border: 2px solid var(--glass-border);
+      border-radius: 14px;
+      background: var(--glass);
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 4px;
+      text-align: center;
+      text-transform: uppercase;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    .gate-input::placeholder {
+      letter-spacing: 1px;
+      color: rgba(255,255,255,0.3);
+    }
+    .gate-input:focus {
+      border-color: var(--primary);
+    }
+    .gate-btn {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .gate-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(108,60,224,0.4);
+    }
+    .gate-error {
+      color: #f87171;
+      font-size: 0.9rem;
+      margin-top: 14px;
+      display: none;
+    }
+
+    /* === CLASSES (After Access) === */
+    .classes {
+      display: none;
+    }
+    .classes.visible {
+      display: block;
+    }
+
+    .welcome-bar {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 20px 28px;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .welcome-bar .welcome-text {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.6);
+    }
+    .welcome-bar .welcome-text strong {
+      color: #fff;
+    }
+    .logout-btn {
+      padding: 8px 20px;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px;
+      background: transparent;
+      color: rgba(255,255,255,0.5);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .logout-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Course cards */
+    .course-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .class-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 28px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .class-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,0.2);
+    }
+    .class-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+    .class-icon.art { background: linear-gradient(135deg, #f472b6, #ec4899); }
+    .class-icon.chess { background: linear-gradient(135deg, #34d399, #059669); }
+    .class-icon.dance { background: linear-gradient(135deg, #a78bfa, #7c3aed); }
+    .class-icon.music { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+    .class-icon.abacus { background: linear-gradient(135deg, #38bdf8, #0284c7); }
+
+    .class-info {
+      flex: 1;
+    }
+    .class-info h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .class-info p {
+      color: rgba(255,255,255,0.4);
+      font-size: 0.85rem;
+    }
+
+    .join-btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      white-space: nowrap;
+    }
+    .join-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(108,60,224,0.4);
+    }
+
+    /* Info note */
+    .info-note {
+      background: rgba(251, 191, 36, 0.08);
+      border: 1px solid rgba(251, 191, 36, 0.2);
+      border-radius: var(--radius);
+      padding: 20px 28px;
+      margin-top: 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.6;
+    }
+    .info-note span {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    /* Footer */
+    .page-footer {
+      text-align: center;
+      margin-top: 50px;
+      padding-top: 24px;
+      border-top: 1px solid var(--glass-border);
+      color: rgba(255,255,255,0.3);
+      font-size: 0.85rem;
+    }
+    .page-footer a {
+      color: var(--primary-light);
+      text-decoration: none;
+    }
+
+    /* Help link */
+    .help-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .help-link a {
+      color: rgba(255,255,255,0.3);
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+    .help-link a:hover {
+      color: var(--primary-light);
+    }
+
+    @media (max-width: 600px) {
+      .class-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 24px 20px;
+      }
+      .join-btn {
+        width: 100%;
+        text-align: center;
+      }
+      .gate-form {
+        flex-direction: column;
+      }
+      .welcome-bar {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrap">
+
+    <!-- Header -->
+    <div class="header">
+      <a href="index.html"><img src="assets/logo.svg" alt="Beyond Books" class="logo-img" /></a>
+      <h1><span>My Classes</span></h1>
+      <p>Access your Google Meet class links</p>
+    </div>
+
+    <!-- Access Code Gate -->
+    <div class="gate" id="gate">
+      <div class="gate-icon">&#128274;</div>
+      <h2>Enter Access Code</h2>
+      <p>This page is for enrolled students only.<br>Your access code was shared on WhatsApp or email.</p>
+      <div class="gate-form">
+        <input type="text" class="gate-input" id="codeInput" placeholder="ACCESS CODE" maxlength="20" autocomplete="off" />
+        <button class="gate-btn" id="codeBtn">Enter</button>
+      </div>
+      <p class="gate-error" id="codeError">Incorrect code. Please check WhatsApp or contact us.</p>
+      <div class="help-link">
+        <a href="https://wa.me/917416745454?text=Hi%2C%20I%20need%20my%20student%20access%20code%20for%20Beyond%20Books%20classes." target="_blank">Don't have a code? Message us on WhatsApp</a>
+      </div>
+    </div>
+
+    <!-- Classes (shown after code) -->
+    <div class="classes" id="classes">
+
+      <div class="welcome-bar">
+        <div class="welcome-text">Welcome, <strong>Beyond Books Student</strong></div>
+        <button class="logout-btn" id="logoutBtn">Lock Page</button>
+      </div>
+
+      <div class="course-list">
+
+        <div class="class-card">
+          <div class="class-icon art">&#127912;</div>
+          <div class="class-info">
+            <h3>Art & Craft</h3>
+            <p>Drawing, painting, origami & creative projects</p>
+          </div>
+          <a href="https://meet.google.com" class="join-btn" id="link-art" target="_blank">Join Class</a>
+        </div>
+
+        <div class="class-card">
+          <div class="class-icon chess">&#9823;</div>
+          <div class="class-info">
+            <h3>Chess</h3>
+            <p>Strategy, critical thinking & problem solving</p>
+          </div>
+          <a href="https://meet.google.com" class="join-btn" id="link-chess" target="_blank">Join Class</a>
+        </div>
+
+        <div class="class-card">
+          <div class="class-icon dance">&#128131;</div>
+          <div class="class-info">
+            <h3>Classical Dance</h3>
+            <p>Bharatanatyam, Kuchipudi & graceful movements</p>
+          </div>
+          <a href="https://meet.google.com" class="join-btn" id="link-dance" target="_blank">Join Class</a>
+        </div>
+
+        <div class="class-card">
+          <div class="class-icon music">&#127925;</div>
+          <div class="class-info">
+            <h3>Classical Music</h3>
+            <p>Carnatic & Hindustani vocal training</p>
+          </div>
+          <a href="https://meet.google.com" class="join-btn" id="link-music" target="_blank">Join Class</a>
+        </div>
+
+        <div class="class-card">
+          <div class="class-icon abacus">&#129518;</div>
+          <div class="class-info">
+            <h3>Abacus</h3>
+            <p>Mental math, speed & accuracy with numbers</p>
+          </div>
+          <a href="https://meet.google.com" class="join-btn" id="link-abacus" target="_blank">Join Class</a>
+        </div>
+
+      </div>
+
+      <div class="info-note">
+        <span>&#128161;</span>
+        <div>
+          <strong>Note:</strong> Join your class at the scheduled time shared on WhatsApp.
+          If you have trouble joining, call us at <strong>7416745454</strong> or
+          <a href="https://wa.me/917416745454" target="_blank" style="color: var(--primary-light);">message on WhatsApp</a>.
+        </div>
+      </div>
+
+      <div class="page-footer">
+        <p>&copy; 2026 Beyond Books. All rights reserved.</p>
+        <p style="margin-top:6px;"><a href="index.html">&larr; Back to main website</a></p>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ===== ACCESS CODE CONFIG =====
+    // Change this code anytime. Share it only with enrolled students.
+    const ACCESS_CODE = 'BEYOND2025';
+
+    const gate = document.getElementById('gate');
+    const classes = document.getElementById('classes');
+    const codeInput = document.getElementById('codeInput');
+    const codeBtn = document.getElementById('codeBtn');
+    const codeError = document.getElementById('codeError');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    // ===== MEET LINKS CONFIG =====
+    // Replace these with your actual Google Meet links
+    const MEET_LINKS = {
+      art:    'https://meet.google.com/your-art-link',
+      chess:  'https://meet.google.com/your-chess-link',
+      dance:  'https://meet.google.com/your-dance-link',
+      music:  'https://meet.google.com/your-music-link',
+      abacus: 'https://meet.google.com/your-abacus-link'
+    };
+
+    function applyMeetLinks() {
+      document.getElementById('link-art').href = MEET_LINKS.art;
+      document.getElementById('link-chess').href = MEET_LINKS.chess;
+      document.getElementById('link-dance').href = MEET_LINKS.dance;
+      document.getElementById('link-music').href = MEET_LINKS.music;
+      document.getElementById('link-abacus').href = MEET_LINKS.abacus;
+    }
+
+    function unlock() {
+      gate.style.display = 'none';
+      classes.classList.add('visible');
+      applyMeetLinks();
+      sessionStorage.setItem('bb_access', 'true');
+    }
+
+    function lock() {
+      gate.style.display = '';
+      classes.classList.remove('visible');
+      codeInput.value = '';
+      codeError.style.display = 'none';
+      sessionStorage.removeItem('bb_access');
+    }
+
+    // Check if already unlocked this session
+    if (sessionStorage.getItem('bb_access') === 'true') {
+      unlock();
+    }
+
+    codeBtn.addEventListener('click', () => {
+      const entered = codeInput.value.trim().toUpperCase();
+      if (entered === ACCESS_CODE) {
+        unlock();
+      } else {
+        codeError.style.display = 'block';
+        codeInput.style.borderColor = '#f87171';
+        setTimeout(() => {
+          codeInput.style.borderColor = '';
+        }, 2000);
+      }
+    });
+
+    codeInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') codeBtn.click();
+    });
+
+    logoutBtn.addEventListener('click', lock);
+  </script>
+</body>
+</html>

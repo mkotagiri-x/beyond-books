@@ -262,6 +262,220 @@ If both work, you're all set!
 
 
 ===============================================================
+  STEP 8: SET UP AUTO MEET LINK EMAILS (Enrollment Feature)
+===============================================================
+
+When you change a student's Status to "Enrolled" in the sheet,
+they'll automatically get an email with their Google Meet link.
+
+PART A — Create the MeetLinks tab:
+
+1. In your Google Sheet, click the "+" button at the bottom
+   (next to the "Leads" tab) to add a new sheet tab.
+
+2. Rename this new tab to: MeetLinks
+   (Right-click the tab → Rename → Type: MeetLinks)
+
+3. In Row 1, type these headers:
+
+   Cell A1 → Course
+   Cell B1 → Meet Link
+
+4. Fill in your courses and their Google Meet links:
+
+   | Course           | Meet Link                              |
+   |------------------|----------------------------------------|
+   | Art & Craft      | https://meet.google.com/xxx-xxxx-xxx   |
+   | Chess            | https://meet.google.com/xxx-xxxx-xxx   |
+   | Classical Dance   | https://meet.google.com/xxx-xxxx-xxx   |
+   | Classical Music   | https://meet.google.com/xxx-xxxx-xxx   |
+   | Abacus           | https://meet.google.com/xxx-xxxx-xxx   |
+
+   HOW TO CREATE A MEET LINK:
+   → Go to https://meet.google.com
+   → Click "New meeting" → "Create a meeting for later"
+   → Copy the link and paste it in the sheet
+   (These links don't expire, you can reuse them)
+
+PART B — Update the Apps Script:
+
+1. Go to your Google Sheet → Extensions → Apps Script
+2. SELECT ALL the existing code (Ctrl+A) and DELETE it
+3. Paste the NEW code below (it includes everything from
+   before PLUS the enrollment email feature):
+
+------- COPY START -------
+
+function doPost(e) {
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Leads");
+    var data = JSON.parse(e.postData.contents);
+
+    sheet.appendRow([
+      new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+      data.name || "",
+      data.age || "",
+      data.phone || "",
+      data.city || "",
+      data.course || "",
+      data.timeslot || "",
+      data.callback || "",
+      data.platform || "Google Meet",
+      "New Lead",
+      ""
+    ]);
+
+    MailApp.sendEmail({
+      to: "beyondbooks.mine@gmail.com",
+      subject: "New Demo Booking: " + data.name + " - " + data.course,
+      body: "New demo booking on Beyond Books!\n\n" +
+            "Student: " + data.name + "\n" +
+            "Age: " + data.age + "\n" +
+            "Phone: " + data.phone + "\n" +
+            "City: " + data.city + "\n" +
+            "Course: " + data.course + "\n" +
+            "Timeslot: " + data.timeslot + "\n" +
+            "Callback Time: " + data.callback + "\n" +
+            "Platform: Google Meet\n\n" +
+            "View all leads: " + SpreadsheetApp.getActiveSpreadsheet().getUrl()
+    });
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ status: "success" }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ status: "error", message: error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doGet(e) {
+  return ContentService
+    .createTextOutput(JSON.stringify({ status: "ok", message: "Beyond Books API is running" }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+// ===== AUTO SEND MEET LINK ON ENROLLMENT =====
+function onEdit(e) {
+  var sheet = e.source.getActiveSheet();
+  var range = e.range;
+
+  // Only trigger on the "Leads" sheet, column J (Status)
+  if (sheet.getName() !== "Leads") return;
+  if (range.getColumn() !== 10) return;
+
+  var newValue = range.getValue().toString().trim().toLowerCase();
+  if (newValue !== "enrolled") return;
+
+  var row = range.getRow();
+  var name = sheet.getRange(row, 2).getValue();
+  var phone = sheet.getRange(row, 4).getValue();
+  var city = sheet.getRange(row, 5).getValue();
+  var course = sheet.getRange(row, 6).getValue();
+
+  // Look up Google Meet link from MeetLinks tab
+  var meetSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("MeetLinks");
+  if (!meetSheet) return;
+
+  var meetData = meetSheet.getDataRange().getValues();
+  var meetLink = "";
+  for (var i = 1; i < meetData.length; i++) {
+    if (meetData[i][0].toString().trim().toLowerCase() === course.toString().trim().toLowerCase()) {
+      meetLink = meetData[i][1];
+      break;
+    }
+  }
+
+  if (!meetLink) {
+    SpreadsheetApp.getUi().alert("No Meet link found for course: " + course + ". Check the MeetLinks tab.");
+    return;
+  }
+
+  // Check if there's an email in the Notes column or use phone for WhatsApp
+  var notes = sheet.getRange(row, 11).getValue();
+
+  // Send email to the student (if email is in Notes column)
+  if (notes && notes.toString().includes("@")) {
+    MailApp.sendEmail({
+      to: notes.toString().trim(),
+      subject: "Welcome to Beyond Books - " + course + "!",
+      body: "Hi " + name + "!\n\n" +
+            "Welcome to Beyond Books! You are now enrolled in " + course + ".\n\n" +
+            "Your Google Meet Class Link:\n" +
+            meetLink + "\n\n" +
+            "Save this link — you'll use it to join every class.\n" +
+            "Your schedule will be shared on WhatsApp.\n\n" +
+            "You can also find your class link anytime at:\n" +
+            "https://beyond-books-live.netlify.app/classes.html\n" +
+            "Access Code: BEYOND2025\n\n" +
+            "See you in class!\n" +
+            "Team Beyond Books\n" +
+            "Phone: 7416745454"
+    });
+  }
+
+  // Always notify you (the admin)
+  MailApp.sendEmail({
+    to: "beyondbooks.mine@gmail.com",
+    subject: "Student Enrolled: " + name + " - " + course,
+    body: "Student enrolled successfully!\n\n" +
+          "Name: " + name + "\n" +
+          "Phone: " + phone + "\n" +
+          "City: " + city + "\n" +
+          "Course: " + course + "\n" +
+          "Meet Link: " + meetLink + "\n\n" +
+          "Send this Meet link to the student on WhatsApp too."
+  });
+
+  // Mark with timestamp in Notes (append, don't overwrite email)
+  var existingNotes = sheet.getRange(row, 11).getValue();
+  var enrollNote = "Enrolled: " + new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+  sheet.getRange(row, 11).setValue(existingNotes ? existingNotes + " | " + enrollNote : enrollNote);
+}
+
+------- COPY END -------
+
+4. Click SAVE (Ctrl+S)
+
+5. IMPORTANT — Set up the trigger:
+   a. In Apps Script, click the CLOCK icon on the left sidebar
+      (it says "Triggers")
+   b. Click "+ Add Trigger" (bottom right)
+   c. Set these values:
+      Function:           onEdit
+      Event source:       From spreadsheet
+      Event type:         On edit
+   d. Click SAVE
+   e. Authorize if asked (same steps as before)
+
+6. RE-DEPLOY the web app:
+   → Deploy → Manage deployments → Edit (pencil icon)
+   → Version: New version → Deploy
+
+
+HOW IT WORKS:
+
+  New lead comes in → Status = "New Lead"
+       ↓
+  You call the student, confirm enrollment
+       ↓
+  In Google Sheet, change Status to "Enrolled"
+       ↓
+  AUTOMATICALLY:
+    • If student's email is in Notes column → sends them
+      a welcome email with their Meet link
+    • Sends YOU an admin email with the Meet link
+      (so you can also share it on WhatsApp)
+    • Adds enrollment timestamp to Notes column
+
+  TIP: When a new lead comes in, add their email to the
+  Notes column (K). Then when you mark "Enrolled", they
+  get the welcome email automatically.
+
+
+===============================================================
   TROUBLESHOOTING
 ===============================================================
 
