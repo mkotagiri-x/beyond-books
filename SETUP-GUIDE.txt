@@ -444,7 +444,13 @@ function onEdit(e) {
   if (range.getColumn() !== 10) return;
 
   var newValue = range.getValue().toString().trim().toLowerCase();
-  if (newValue !== "enrolled") return;
+
+  // If status changed AWAY from "Enrolled", clear the access code
+  if (newValue !== "enrolled") {
+    var row = range.getRow();
+    sheet.getRange(row, 12).setValue("");
+    return;
+  }
 
   var row = range.getRow();
   var name = sheet.getRange(row, 2).getValue();
